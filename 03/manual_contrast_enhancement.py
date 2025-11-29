@@ -25,63 +25,15 @@ f[2, 1] = -1
 # Применение фильтра к каждому каналу вручную
 for y in range(1, rows - 1):
     for x in range(1, cols - 1):
-        image1[y,
-               x,
-               0] = min(255,
-                        abs(image[y,
-                                  x,
-                                  0] * f[0,
-                                         1] + image[y,
-                                                    x - 1,
-                                                    0] * f[1,
-                                                           0] + image[y,
-                                                                      x,
-                                                                      0] * f[1,
-                                                                             1] + image[y,
-                                                                                        x + 1,
-                                                                                        0] * f[1,
-                                                                                               2] + image[y + 1,
-                                                                                                          x,
-                                                                                                          0] * f[2,
-                                                                                                                 1]))
-        image1[y,
-               x,
-               1] = min(255,
-                        abs(image[y - 1,
-                                  x,
-                                  1] * f[0,
-                                         1] + image[y,
-                                                    x - 1,
-                                                    1] * f[1,
-                                                           0] + image[y,
-                                                                      x,
-                                                                      1] * f[1,
-                                                                             1] + image[y,
-                                                                                        x + 1,
-                                                                                        1] * f[1,
-                                                                                               2] + image[y + 1,
-                                                                                                          x,
-                                                                                                          1] * f[2,
-                                                                                                                 1]))
-        image1[y,
-               x,
-               2] = min(255,
-                        abs(image[y - 1,
-                                  x,
-                                  2] * f[0,
-                                         1] + image[y,
-                                                    x - 1,
-                                                    2] * f[1,
-                                                           0] + image[y,
-                                                                      x,
-                                                                      2] * f[1,
-                                                                             1] + image[y,
-                                                                                        x + 1,
-                                                                                        2] * f[1,
-                                                                                               2] + image[y + 1,
-                                                                                                          x,
-                                                                                                          2] * f[2,
-                                                                                                                 1]))
+        for channel in range(3):
+            result = (
+                image[y - 1, x, channel] * f[0, 1] +
+                image[y, x - 1, channel] * f[1, 0] +
+                image[y, x, channel] * f[1, 1] +
+                image[y, x + 1, channel] * f[1, 2] +
+                image[y + 1, x, channel] * f[2, 1]
+            )
+            image1[y, x, channel] = min(255, abs(result))
 
 cv2.namedWindow('Processed', cv2.WINDOW_NORMAL)
 cv2.imshow('Processed', image1)

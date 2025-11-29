@@ -40,6 +40,14 @@ def RegionGrowing(img, seedpix, thresh):
     stack.append([x, y])
     mask[y, x] = 1
 
+    # Массив направлений (4-связность)
+    directions = [
+        [0, -1],   # верх
+        [0, 1],    # низ
+        [-1, 0],   # лево
+        [1, 0]     # право
+    ]
+
     # Алгоритм регионарного роста
     b = 0
     e = 1
@@ -50,50 +58,18 @@ def RegionGrowing(img, seedpix, thresh):
         yy = stack[b][1]
         b += 1
 
-        # Проверка соседних пикселей (4-связность)
-        if mask[yy - 1,
-                xx] == 0 and cv2.norm(img[yy,
-                                          xx,
-                                          :] - img[yy - 1,
-                                                   xx,
-                                                   :]) <= thresh:
-            stack.append([xx, yy - 1])
-            mask[yy - 1, xx] = 1
-            e += 1
-            N += 1
+        current_pixel = img[yy, xx, :]
 
-        if mask[yy + 1,
-                xx] == 0 and cv2.norm(img[yy,
-                                          xx,
-                                          :] - img[yy + 1,
-                                                   xx,
-                                                   :]) <= thresh:
-            stack.append([xx, yy + 1])
-            mask[yy + 1, xx] = 1
-            e += 1
-            N += 1
+        # Проверка всех соседних пикселей
+        for dx, dy in directions:
+            nx, ny = xx + dx, yy + dy
 
-        if mask[yy,
-                xx - 1] == 0 and cv2.norm(img[yy,
-                                              xx,
-                                              :] - img[yy,
-                                                       xx - 1,
-                                                       :]) <= thresh:
-            stack.append([xx - 1, yy])
-            mask[yy, xx - 1] = 1
-            e += 1
-            N += 1
-
-        if mask[yy,
-                xx + 1] == 0 and cv2.norm(img[yy,
-                                              xx,
-                                              :] - img[yy,
-                                                       xx + 1,
-                                                       :]) <= thresh:
-            stack.append([xx + 1, yy])
-            mask[yy, xx + 1] = 1
-            e += 1
-            N += 1
+            if (mask[ny, nx] == 0 and
+                    cv2.norm(current_pixel - img[ny, nx, :]) <= thresh):
+                stack.append([nx, ny])
+                mask[ny, nx] = 1
+                e += 1
+                N += 1
 
     return mask
 
