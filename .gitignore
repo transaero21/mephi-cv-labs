@@ -196,3 +196,6 @@ pyrightconfig.json
 
 # Temporary directory
 temp/
+
+# YOLO
+*.pt
